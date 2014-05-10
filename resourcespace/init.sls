@@ -12,17 +12,25 @@ include:
   - php.apc
   - php.curl
 
-resourcespace-install:
+resourcespace_install:
+  file.directory:
+    - name: {{ resourcespace.app.app_root }}
+    - makedirs: True
   archive.extracted:
     - name: {{ resourcespace.app.app_root }}
     - source: {{ resourcespace.app.source }}
     - source_hash: {{ resourcespace.app.checksum }}
     - archive_format: zip
     - if_missing: {{ test_file }}
+    - require:
+      - archive: resourcespace_install
+
+resourcespace_config:
   file.managed:
     - name: {{ conf_file }}
     - template: jinja
     - source: salt://resourcespace/files/config.php
     - context:
       config: {{ resourcespace.app.config }}
-  
+    - require:
+      - archive: resoucespace_install
