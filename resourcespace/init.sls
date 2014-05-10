@@ -23,7 +23,7 @@ resourcespace_install:
     - archive_format: zip
     - if_missing: {{ test_file }}
     - require:
-      - archive: resourcespace_install
+      - file: resourcespace_install
 
 resourcespace_config:
   file.managed:
