@@ -1,4 +1,4 @@
-{% set resourcespace = { salt['pillar.get']('resourcespace', {
+{% set resourcespace = salt['pillar.get']('resourcespace', {
     'lookup': salt['grains.filter_by'] ({
         'Debian': {
 
@@ -24,6 +24,7 @@
             'spider_password': 'TBTT6FD',
             'spider_usergroup': 2,
             'spider_access': 'array(0,1)',
+        },
     },
     'storage': None,
 },  merge=True) %}
