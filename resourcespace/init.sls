@@ -4,7 +4,7 @@
 {% set conf_file = resourcespace.app.app_root ~ resourcespace.app.conf_file %}
 
 
-import:
+include:
   - php
   - php.imagick
   - php.mysql
