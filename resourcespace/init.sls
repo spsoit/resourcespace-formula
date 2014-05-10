@@ -33,4 +33,4 @@ resourcespace_config:
     - context:
       config: {{ resourcespace.app.config }}
     - require:
-      - archive: resoucespace_install
+      - archive: resourcespace_install
