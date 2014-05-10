@@ -19,7 +19,7 @@ resourcespace_install:
   archive.extracted:
     - name: {{ resourcespace.app.app_root }}
     - source: {{ resourcespace.app.source }}
-    - source_hash: {{ resourcespace.app.checksum }}
+    - source_hash: md5={{ resourcespace.app.checksum }}
     - archive_format: zip
     - if_missing: {{ test_file }}
     - require:
