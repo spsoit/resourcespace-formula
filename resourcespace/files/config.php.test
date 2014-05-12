@@ -1,0 +1,15 @@
+{% for k, v in config.items() %}
+
+{% if v is number %}
+  number ({{ k }}): {{ v|pprint }}
+{% elif v is string %}
+  string ({{ k }}): {{ v|pprint }}
+{% elif v is mapping %}
+  mappin: ({{ k }}): {{ v|pprint }}
+{% elif v is iterable %}
+  iterable ({{ k }}): {{ v|pprint }}
+{% else %}
+  other ({{ k }}): {{ v|pprint }}
+{% endif %}
+
+{% endfor %}

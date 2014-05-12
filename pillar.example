@@ -1,0 +1,77 @@
+resourcespace:
+    # lookup values normally determined by grains
+    # this section does not normally need to be overridden
+    lookup:
+      webuser: www-data
+      webgroup: www-data
+
+    # this section directly relates to the installation and
+    # configuration of the resourcespace application
+    app:
+
+      # Directives in this section are shared between multiple
+      # state module/function declarations and almost always
+      # override individual module declarations.
+      shared:
+        # Location of the main config file relative to webroot
+        config: /include/config.php
+        # Location of the index file relative to webroot
+        index: /index.php
+        # Absolute path to the directory that stores media
+        filestore: /var/www/resourcespace/filestore
+        # Absolute path to the application web root
+        webroot: /var/www/resourcespace
+      
+      # This section manages the directory into which
+      # resourcespace will be installed.
+      #
+      # It partially exposes salt.states.file.directory()
+      # and all non-requisite, non-name params should be accepted
+      app_root:
+        - makedirs: True
+
+      # This section manages the application source.
+      # code.
+      #
+      # It partially exposes salt.states.archive.extracted() and
+      # all non-requisite, non-name params should be accepted.
+      source:
+        - source: http://www.resourcespace.org/some/file.zip
+        - archive_type: zip
+        - source_hash: md5=asjasdjasdjasdjasjasdj
+
+      # This section controls states related to the media store.
+      storage:
+        
+        # Defaults to None, when passed a dictionary this section
+        # fully exposes salt.states.mount.mounted().
+        mount:
+          name: /some/location
+          device: /dev/sdd
+
+        # Partially exposes salt.states.file.directory().
+        #
+        # Name, user, and group are overriden values from shared
+        # and lookup, respectively. All other values will be passed.
+        directory:
+          clean: True
+
+      # Custom application configuration settings.
+      # 
+      # Each setting should be a dictionary key as below.
+      # This does support both associative and indexed arrays
+      # as dictionaries and lists, respectively.
+      #
+      # Note: ResourceSpace (currently) includes its default
+      # config file before these settings. This section should
+      # probably only include deviations from those defaults.
+      config:
+        mysql_server: localhost
+        mysql_username: root
+        auto_approve_domains:
+          'mycompany.com': 2
+          'othercompany.org': 3
+        list_display_array:
+          - 15
+          - 30
+          - 60

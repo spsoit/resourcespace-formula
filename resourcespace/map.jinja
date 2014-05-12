@@ -1,30 +1,45 @@
+{% macro sls_block(dict) %}
+    {% for key, value in dict.items() %}
+    - {{ key }}: {{ value|json() }}
+    {% endfor %}
+{% endmacro %}
+
 {% set resourcespace = salt['pillar.get']('resourcespace', {
     'lookup': salt['grains.filter_by'] ({
         'Debian': {
-
+            'webuser': 'www-data',
+            'webgroup': 'www-data',
+        },
+        'RedHat': {
+            'webuser': 'httpd',
+            'webgroup': 'httpd',
         },
     }, default='Debian'),
     'app': {
-        'source': 'http://www.resourcespace.org/downloads/ResourceSpace_6_2_5428.zip',
-        'checksum': 'c421b8bc011ad765d4196b871279ba1e',
-        'app_root': '/var/www',
-        'test_success': '/include/version.php',
-        'conf_file': '/include/config.php',
-        'config': {
-            'mysql_server': 'localhost',
-            'mysql_username': 'root',
-            'mysql_password': '',
-            'mysql_db': 'resourcespace',
-            'mysql_bin_path': '/usr/bin',
-            'mysql_force_strict_mode': False,
-            'mysql_verbatim_queries': False,
-            'baseurl': 'http://my.site/resourcespace',
-            'email_from': 'resourcespace@my.site',
-            'email_notify': 'resourcespace@my.site',
-            'spider_password': 'TBTT6FD',
-            'spider_usergroup': 2,
-            'spider_access': [0,1],
+        'shared': {
+            'config': '/include/config.php',
+            'index': '/index.php',
+            'filestore': '/var/www/resourcespace/filestore',
+            'webroot': '/var/www/resourcespace',
+        },
+        'app_root': {
+            'makedirs': True,
+        },
+        'source': {
+            'source': 'http://www.resourcespace.org/downloads/ResourceSpace_6_2_5428.zip',
+            'source_hash': 'md5=c421b8bc011ad765d4196b871279ba1e',
+            'archive_format': 'zip',
+        },
+        'config': {},
+    },
+    'storage': {
+        'mount': {
+        },
+        'directory': {
         },
     },
-    'storage': None,
 },  merge=True) %}
+
+{% do resourcespace.app.config.update({
+    'storagedir': resourcespace.app.shared.filestore,
+}) %}

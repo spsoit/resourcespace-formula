@@ -1,25 +1,35 @@
-{%- macro quote_val(value) %}
-{% if value is number -%}
-  {{ value }}
-{%- else -%}
-  '{{ value|replace("'", "\'"}}'
-{%- endif %}
-{% endmacro -%}
+{% set indent_increment = 4 %}
 
-{%- macro php_block(key, value, operator='=', delim=';', keypre = '$', ind=0) %}
-    {%- if value is iterable: -%}
-        {{ keypre|indent(ind) }}{{ key }} {{ operator }} array(
-        {%- for k, v in value.items() %}
-            {{ php_block(k, v, '=>', ',', '', (ind + 4) }}
-        {% endfor -%}
-        {{ ')'|indent(ind) }}{{delim}}
+{%- macro php_escape(value) -%}
+    {%- if value is number -%}
+        {{ value }}
     {%- else -%}
-        {{ keypre|indent(ind) }}{{ quote_val(key) }} {{ operator }} {{ value }}{{ delim }}
+        '{{ value|replace("'", "\'") }}'
     {%- endif -%}
-{% endmacro -%}
+{%- endmacro -%}
+
+{%- macro php_block(value, key=None, operator=' = ', delim=';', keypre='$', ind=0) -%}
+    {%- if value is number or value is string -%}
+        {{ keypre|indent(ind, True) }}{{ key }}{{ operator }}{{ php_escape(value) }}{{ delim }}
+    {%- elif value is mapping -%}
+        {{ keypre|indent(ind, True) }}{{ key }}{{ operator }}array(
+        {%- for k, v in value.items() %}
+{{ php_block(v, php_escape(k), ' => ', ',', '', (ind + indent_increment)) }}
+        {%- endfor %}
+{{ ')'|indent(ind, True) }}{{ delim }}
+    {%- elif value is iterable -%}
+        {{ keypre|indent(ind, True) }}{{ key }}{{ operator }}array(
+        {%- for v in value %}
+{{ php_block(v, '', '', ',', '', (ind + indent_increment)) }}
+        {%- endfor %}
+{{ ')'|indent(ind, True) }}{{ delim }}
+    {%- else -%}
+        {{ keypre|indent(ind, True) }}{{ php_escape(key) }}{{ operator }}{{ php_escape(value) }}{{ delim }}
+    {%- endif -%}
+{%- endmacro -%}
 <?php
 /**
- * This file contains the default configuration settings.
+ * This file contains custom configuration settings.
  * 
  * **** DO NOT ALTER THIS FILE! ****
  *
@@ -30,6 +40,6 @@
  * 
  */
 
-{% for key,value in config.items() %}
-{{ php_block(key, value) }}
-{% endfor %}
+{% for key, value in config.items() %}
+{{ php_block(value, key) }}
+{%- endfor -%}
