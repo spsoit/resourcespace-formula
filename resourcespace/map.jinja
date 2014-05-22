@@ -9,12 +9,21 @@
         'Debian': {
             'webuser': 'www-data',
             'webgroup': 'www-data',
+            'pkgs': {
+                'antiword': 'antiword',
+                'exiftool': 'libimage-exiftool-perl',
+                'ffmpeg': 'libav-tools',
+                'ghostscript': 'ghostscript',
+                'imagick': 'graphicsmagick',
+                'xpdf': 'xpdf',
+                'zip': 'zip',
+            },
         },
         'RedHat': {
             'webuser': 'httpd',
             'webgroup': 'httpd',
         },
-    }, default='Debian'),
+    }),
     'app': {
         'shared': {
             'config': '/include/config.php',
@@ -32,11 +41,36 @@
         },
         'config': {},
     },
+    'pkg': {
+        'opts': {},
+        'installed': [
+            'antiword',
+            'exiftool',
+            'ffmpeg',
+            'ghostscript',
+            'imagick',
+            'xpdf',
+            'zip',
+        ],
+    },
     'storage': {
-        'mount': {
+        'mount': {},
+        'directory': {},
+    },
+    'php': {
+        'states': {
+            'php': 'php.ng',
+            'mcrypt': 'php.ng.mcrypt',
+            'imagick': 'php.ng.imagick',
+            'mysql': 'php.ng.mysql',
+            'gd': 'php.ng.gd',
+            'apc': 'php.ng.apc',
+            'curl': 'php.ng.curl',
+            'fpm': 'php.ng.fpm',
         },
-        'directory': {
-        },
+    },
+    'nginx': {
+        'state': 'nginx.ng'
     },
 },  merge=True) %}
 

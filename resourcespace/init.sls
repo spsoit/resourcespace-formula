@@ -1,13 +1,30 @@
 # Installs the resourcespace application from source
 {% from 'resourcespace/map.jinja' import resourcespace, sls_block with context %}
 
+{% macro pkgs_list(pkgs) %}
+      {% for pkg in pkgs %}
+      - {{ resourcespace.lookup.pkgs.get(pkg) }}
+      {% endfor %}
+{% endmacro %}
+
 include:
-  - php
-  - php.imagick
-  - php.mysql
-  - php.gd
-  - php.apc
-  - php.curl
+  - {{ resourcespace.php.states.php }}
+  - {{ resourcespace.php.states.mcrypt }}
+  - {{ resourcespace.php.states.imagick }}
+  - {{ resourcespace.php.states.mysql }}
+  - {{ resourcespace.php.states.gd }}
+  - {{ resourcespace.php.states.apc }}
+  - {{ resourcespace.php.states.curl }}
+
+{% if resourcespace.pkg.installed|length() > 0 %}
+resourcespace_optional_pkgs:
+  pkg.installed:
+    {{ sls_block(resourcespace.pkg.opts) }}
+    - pkgs:
+      {{ pkgs_list(resourcespace.pkg.installed) }}
+    - require:
+      - file: resourcespace_install
+{% endif %}
 
 resourcespace_install:
   file.directory:
