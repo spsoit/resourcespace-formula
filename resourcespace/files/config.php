@@ -13,7 +13,7 @@
         {{ keypre|indent(ind, True) }}{{ key }}{{ operator }}{{ php_escape(value) }}{{ delim }}
     {%- elif value is mapping -%}
         {{ keypre|indent(ind, True) }}{{ key }}{{ operator }}array(
-        {%- for k, v in value.items() %}
+        {%- for k, v in value|dictsort %}
 {{ php_block(v, php_escape(k), ' => ', ',', '', (ind + indent_increment)) }}
         {%- endfor %}
 {{ ')'|indent(ind, True) }}{{ delim }}
@@ -40,6 +40,6 @@
  * 
  */
 
-{% for key, value in config.items() %}
+{% for key, value in config|dictsort %}
 {{ php_block(value, key) }}
 {%- endfor -%}
