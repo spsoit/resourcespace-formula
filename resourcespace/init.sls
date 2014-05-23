@@ -1,6 +1,16 @@
 # Installs the resourcespace application from source
 {% from 'resourcespace/map.jinja' import resourcespace, sls_block with context %}
 
+{% set lockdir_cfg = resourcespace.app.lockdown.opts %}
+{% if resourcespace.app.lockdown.enabled %}
+{% do lockdir.cfg.update {
+    'user': resourcespace.app.lockdown.user,
+    'group': resourcespace.app.lockdown.user,
+} %}
+{% else %}
+
+{% endif %}
+
 {% macro pkgs_list(pkgs) %}
       {% for pkg in pkgs %}
       - {{ resourcespace.lookup.pkgs.get(pkg) }}
